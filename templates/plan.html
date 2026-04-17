@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}Plan Your Trip — Wanderlust{% endblock %}
+
+{% block extra_styles %}
+.plan-hero {
+  background: var(--sand); padding: 80px 0 60px;
+  text-align: center;
+}
+.plan-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,4vw,3rem); margin-bottom: 12px; }
+.plan-hero p { color: var(--gray-600); font-size: 1.05rem; max-width: 480px; margin: 0 auto; }
+
+/* FORM */
+.plan-layout { display: grid; grid-template-columns: 420px 1fr; gap: 48px; padding: 60px 0 80px; align-items: start; }
+.plan-form-card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 36px;
+  border: 1px solid var(--gray-200);
+  position: sticky; top: 96px;
+}
+.plan-form-card h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+.plan-form-card p { font-size: 0.88rem; color: var(--gray-400); margin-bottom: 28px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.form-group select, .form-group input {
+  width: 100%; padding: 12px 16px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+  outline: none; transition: all 0.2s; background: var(--white); color: var(--ink);
+}
+.form-group select:focus, .form-group input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(15,14,13,0.06); }
+.budget-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.budget-opt { display: none; }
+.budget-label {
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
+  padding: 12px 8px; text-align: center; cursor: pointer;
+  transition: all 0.2s; display: block;
+}
+.budget-label:hover { border-color: var(--gray-400); }
+.budget-opt:checked + .budget-label { border-color: var(--ink); background: var(--ink); color: var(--white); }
+.budget-label i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+.budget-label span { font-size: 0.8rem; font-weight: 500; }
+
+.days-slider { position: relative; }
+.days-slider input[type=range] { width: 100%; accent-color: var(--ink); }
+.days-display {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.85rem; color: var(--gray-400); margin-top: 4px;
+}
+.days-val { font-size: 1.5rem; font-weight: 700; color: var(--ink); font-family: 'Playfair Display', serif; }
+
+/* RESULTS */
+.results-section { }
+.no-plan {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 80px 40px; background: var(--gray-100); border-radius: var(--radius);
+  text-align: center; color: var(--gray-400);
+}
+.no-plan .icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.4; }
+.no-plan h3 { color: var(--ink); font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 8px; }
+
+/* RESULT CARDS */
+.trip-summary {
+  background: var(--ink); color: var(--white);
+  border-radius: var(--radius); padding: 32px;
+  margin-bottom: 28px; position: relative; overflow: hidden;
+}
+.trip-summary::before {
+  content: ''; position: absolute; right: -40px; top: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(201,168,76,0.1);
+}
+.trip-summary h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 6px; }
+.trip-summary .sub { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 24px; }
+.summary-stats { display: flex; gap: 32px; }
+.summary-stat .num { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+.summary-stat .lbl { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+.cost-breakdown {
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 28px;
+}
+.cost-breakdown h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 20px; }
+.cost-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+.cost-row:last-child { border: none; }
+.cost-row .cost-label { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; }
+.cost-row .cost-label i { width: 32px; height: 32px; background: var(--sand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--gold); }
+.cost-row .cost-val { font-weight: 600; font-size: 0.95rem; }
+.cost-total { background: var(--sand); border-radius: var(--radius-sm); padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+.cost-total .lbl { font-weight: 600; }
+.cost-total .val { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--teal); }
+
+.hotel-pick {
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 28px;
+  display: flex; gap: 20px; align-items: center;
+}
+.hotel-pick img { width: 120px; height: 100px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+.hotel-pick-info h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 4px; }
+.hotel-pick-info .stars { color: var(--gold); font-size: 0.8rem; margin-bottom: 8px; }
+
+.itinerary-days { }
+.day-card {
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+  transition: all 0.2s;
+}
+.day-card:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); }
+.day-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.day-num {
+  width: 44px; height: 44px; background: var(--ink); color: var(--white);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+}
+.day-header h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+.day-activities { display: flex; flex-direction: column; gap: 12px; }
+.activity {
+  display: flex; gap: 12px; padding: 12px;
+  background: var(--gray-100); border-radius: var(--radius-sm);
+}
+.activity img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.activity-info h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+.activity-info p { font-size: 0.8rem; color: var(--gray-400); }
+.activity-meta { display: flex; gap: 10px; margin-top: 6px; }
+.activity-meta span { font-size: 0.75rem; color: var(--gray-600); display: flex; align-items: center; gap: 4px; }
+{% endblock %}
+
+{% block content %}
+<div class="plan-hero">
+  <div class="container animate-up">
+    <div class="section-label">✈ Your Journey Awaits</div>
+    <h1>Build Your Perfect Trip</h1>
+    <p>Tell us your preferences and we'll craft a personalized day-by-day itinerary</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="plan-layout">
+    <!-- FORM -->
+    <div>
+      <div class="plan-form-card">
+        <h2>Trip Preferences</h2>
+        <p>Fill in the details and we'll create your itinerary instantly</p>
+        <form method="post" action="/plan" id="planForm">
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt" style="color:var(--rust);margin-right:6px"></i>Destination</label>
+            <select name="dest_id" id="destSelect" onchange="updateDest(this.value)">
+              {% for key, d in destinations.items() %}
+              <option value="{{ key }}" {% if key == dest_id %}selected{% endif %}>{{ d.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-moon" style="color:var(--teal);margin-right:6px"></i>Duration — <span id="daysLabel">5 days</span></label>
+            <div class="days-slider">
+              <input type="range" name="days" min="2" max="14" value="5" id="daysRange" oninput="updateDays(this.value)">
+              <div class="days-display">
+                <span>2 days</span>
+                <span class="days-val" id="daysVal">5</span>
+                <span>14 days</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-users" style="color:var(--gold);margin-right:6px"></i>Travelers</label>
+            <select name="travelers">
+              <option value="1">Solo (1 person)</option>
+              <option value="2" selected>Couple (2 people)</option>
+              <option value="3">Small Group (3 people)</option>
+              <option value="4">Group (4+ people)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-wallet" style="color:var(--teal);margin-right:6px"></i>Budget Level</label>
+            <div class="budget-grid">
+              <div>
+                <input type="radio" name="budget" value="budget" id="b1" class="budget-opt">
+                <label for="b1" class="budget-label"><i class="fas fa-piggy-bank"></i><span>Budget</span></label>
+              </div>
+              <div>
+                <input type="radio" name="budget" value="mid" id="b2" class="budget-opt" checked>
+                <label for="b2" class="budget-label"><i class="fas fa-star"></i><span>Mid-range</span></label>
+              </div>
+              <div>
+                <input type="radio" name="budget" value="luxury" id="b3" class="budget-opt">
+                <label for="b3" class="budget-label"><i class="fas fa-gem"></i><span>Luxury</span></label>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;border-radius:12px;padding:14px;font-size:1rem">
+            <i class="fas fa-magic"></i> Generate My Itinerary
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-section">
+      {% if not result %}
+      <div class="no-plan">
+        <div class="icon">🗺️</div>
+        <h3>Your Itinerary Will Appear Here</h3>
+        <p>Fill in your trip preferences on the left and click "Generate My Itinerary" to create a custom day-by-day plan</p>
+      </div>
+      {% else %}
+      <!-- TRIP SUMMARY -->
+      <div class="trip-summary animate-up">
+        <h2>Your {{ result.days }}-Day {{ result.destination.name.split(',')[0] }} Adventure</h2>
+        <p class="sub">{{ result.budget|capitalize }} budget • {{ result.travelers }} traveler{{ 's' if result.travelers > 1 }} • Personalized itinerary</p>
+        <div class="summary-stats">
+          <div class="summary-stat"><div class="num">{{ result.days }}</div><div class="lbl">Days</div></div>
+          <div class="summary-stat"><div class="num">{{ result.itinerary|length * 2 }}</div><div class="lbl">Activities</div></div>
+          <div class="summary-stat"><div class="num">${{ "{:,}".format(result.costs.total) }}</div><div class="lbl">Est. Total</div></div>
+        </div>
+      </div>
+
+      <!-- HOTEL -->
+      <div class="hotel-pick animate-up delay-1">
+        <img src="{{ result.hotel.img }}" alt="{{ result.hotel.name }}">
+        <div class="hotel-pick-info">
+          <h3>{{ result.hotel.name }}</h3>
+          <div class="stars">
+            {% for i in range(result.hotel.stars) %}<i class="fas fa-star"></i>{% endfor %}
+            {% for i in range(5 - result.hotel.stars) %}<i class="far fa-star"></i>{% endfor %}
+          </div>
+          <p style="font-size:0.88rem;color:var(--gray-600)">Your recommended stay for {{ result.days }} nights</p>
+          <p style="font-weight:700;font-size:1rem;color:var(--teal);margin-top:6px">${{ result.hotel.price }}/night · Total: ${{ result.costs.hotel }}</p>
+        </div>
+      </div>
+
+      <!-- COST BREAKDOWN -->
+      <div class="cost-breakdown animate-up delay-2">
+        <h3><i class="fas fa-receipt" style="color:var(--gold);margin-right:10px"></i>Budget Breakdown</h3>
+        <div class="cost-row">
+          <div class="cost-label"><i class="fas fa-hotel"></i> Hotel ({{ result.days }} nights)</div>
+          <div class="cost-val">${{ "{:,}".format(result.costs.hotel) }}</div>
+        </div>
+        <div class="cost-row">
+          <div class="cost-label"><i class="fas fa-plane"></i> Flights (est.)</div>
+          <div class="cost-val">${{ "{:,}".format(result.costs.flight) }}</div>
+        </div>
+        <div class="cost-row">
+          <div class="cost-label"><i class="fas fa-utensils"></i> Food & Activities</div>
+          <div class="cost-val">${{ "{:,}".format(result.costs.misc) }}</div>
+        </div>
+        <div class="cost-total">
+          <span class="lbl">Total Estimate ({{ result.travelers }} traveler{{ 's' if result.travelers > 1 }})</span>
+          <span class="val">${{ "{:,}".format(result.costs.total) }}</span>
+        </div>
+      </div>
+
+      <!-- ITINERARY -->
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:20px">
+        <i class="fas fa-route" style="color:var(--gold);margin-right:10px"></i>Day-by-Day Itinerary
+      </h2>
+      <div class="itinerary-days">
+        {% for day in result.itinerary %}
+        <div class="day-card animate-up" style="animation-delay:{{ loop.index0 * 0.08 }}s;opacity:0">
+          <div class="day-header">
+            <div class="day-num">{{ day.day }}</div>
+            <div>
+              <h3>Day {{ day.day }} in {{ result.destination.name.split(',')[0] }}</h3>
+              <p style="font-size:0.82rem;color:var(--gray-400)">{{ day.activities|length }} activities planned</p>
+            </div>
+          </div>
+          <div class="day-activities">
+            {% for act in day.activities %}
+            <div class="activity">
+              <img src="{{ act.img }}" alt="{{ act.name }}">
+              <div class="activity-info">
+                <h4>{{ act.name }}</h4>
+                <p>{{ act.type }}</p>
+                <div class="activity-meta">
+                  <span><i class="fas fa-clock"></i> {{ act.duration }}</span>
+                  <span><i class="fas fa-ticket-alt"></i> {{ act.price }}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div style="display:flex;gap:16px;margin-top:32px">
+        <a href="/plan?dest={{ result.dest_id }}" class="btn btn-outline"><i class="fas fa-redo"></i> Replan</a>
+        <a href="/destination/{{ result.dest_id }}" class="btn btn-primary"><i class="fas fa-compass"></i> Explore {{ result.destination.name.split(',')[0] }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateDays(val) {
+  document.getElementById('daysVal').textContent = val;
+  document.getElementById('daysLabel').textContent = val + ' days';
+}
+function updateDest(val) {
+  // Update URL to reflect selected destination without losing form state
+  const url = new URL(window.location);
+  url.searchParams.set('dest', val);
+  window.history.replaceState({}, '', url);
+}
+// Redirect to plan with dest param on form submit
+document.getElementById('planForm').addEventListener('submit', function(e) {
+  const dest = document.getElementById('destSelect').value;
+  this.action = '/plan?dest=' + dest;
+});
+</script>
+{% endblock %}

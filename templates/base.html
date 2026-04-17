@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Wanderlust — Travel Planner{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --ink: #0f0e0d;
+      --sand: #f5f0e8;
+      --gold: #c9a84c;
+      --gold-light: #e8d5a3;
+      --teal: #1a6b6b;
+      --teal-light: #2a9d8f;
+      --rust: #c84b2f;
+      --white: #ffffff;
+      --gray-100: #f8f7f5;
+      --gray-200: #ede9e0;
+      --gray-400: #9e9589;
+      --gray-600: #5c5650;
+      --shadow-sm: 0 2px 12px rgba(15,14,13,0.08);
+      --shadow-md: 0 8px 32px rgba(15,14,13,0.14);
+      --shadow-lg: 0 20px 60px rgba(15,14,13,0.2);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 72px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      transition: all 0.3s;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-logo-icon {
+      width: 36px; height: 36px; background: var(--ink);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 1rem;
+    }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links a {
+      padding: 8px 18px; border-radius: 50px;
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--gray-600); text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); background: var(--gray-100); }
+    .nav-links a.active { color: var(--ink); background: var(--sand); }
+    .nav-cta {
+      background: var(--ink) !important; color: var(--white) !important;
+      padding: 8px 24px !important;
+    }
+    .nav-cta:hover { background: var(--teal) !important; transform: none; }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink); color: var(--white);
+      padding: 64px 48px 32px;
+      margin-top: 80px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand .nav-logo { color: var(--white); margin-bottom: 16px; display: inline-flex; }
+    .footer-brand p { color: var(--gray-400); font-size: 0.9rem; line-height: 1.7; max-width: 280px; }
+    .footer-col h4 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px; }
+    .footer-col a { display: block; color: #ccc; text-decoration: none; font-size: 0.9rem; margin-bottom: 10px; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom { border-top: 1px solid #2a2825; padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { color: var(--gray-400); font-size: 0.85rem; }
+    .social-links { display: flex; gap: 12px; }
+    .social-links a {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #2a2825; color: var(--gray-400);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; text-decoration: none; transition: all 0.2s;
+    }
+    .social-links a:hover { background: var(--gold); color: var(--ink); }
+    /* UTILS */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: 50px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: all 0.25s; outline: none;
+    }
+    .btn-primary { background: var(--ink); color: var(--white); }
+    .btn-primary:hover { background: var(--teal); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-outline { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+    .btn-outline:hover { background: var(--ink); color: var(--white); }
+    .btn-gold { background: var(--gold); color: var(--ink); }
+    .btn-gold:hover { background: #b8923d; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .tag {
+      display: inline-block; padding: 4px 12px; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 500; background: var(--gray-200); color: var(--gray-600);
+    }
+    .tag.active { background: var(--ink); color: var(--white); }
+    .rating { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; }
+    .rating .star { color: var(--gold); }
+    .page-content { padding-top: 72px; }
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .animate-up { animation: fadeUp 0.6s ease forwards; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    {% block extra_styles %}{% endblock %}
+  </style>
+</head>
+<body>
+  <nav id="navbar">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon"><i class="fas fa-compass"></i></div>
+      Wander<span>lust</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="{% if request.endpoint=='index' %}active{% endif %}">Home</a>
+      <a href="/explore" class="{% if request.endpoint=='explore' %}active{% endif %}">Explore</a>
+      <a href="/plan" class="{% if request.endpoint=='plan' %}active{% endif %}">Plan Trip</a>
+      <a href="/plan" class="nav-cta">Start Planning</a>
+    </div>
+  </nav>
+
+  <div class="page-content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">
+            <div class="nav-logo-icon"><i class="fas fa-compass"></i></div>
+            Wander<span style="color:var(--gold)">lust</span>
+          </a>
+          <p>Your intelligent travel companion. Discover extraordinary destinations and craft perfect journeys around the world.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Discover</h4>
+          <a href="/explore">All Destinations</a>
+          <a href="/explore?tag=Beach">Beach Getaways</a>
+          <a href="/explore?tag=Culture">Cultural Tours</a>
+          <a href="/explore?tag=Adventure">Adventures</a>
+        </div>
+        <div class="footer-col">
+          <h4>Plan</h4>
+          <a href="/plan">Trip Planner</a>
+          <a href="/explore">Inspiration</a>
+          <a href="#">Travel Guides</a>
+          <a href="#">Packing Lists</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#">About Us</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Wanderlust. Crafted with <i class="fas fa-heart" style="color:var(--rust)"></i> for explorers.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-pinterest"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+      } else {
+        navbar.style.boxShadow = 'none';
+      }
+    });
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

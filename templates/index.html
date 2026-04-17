@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+{% block title %}Wanderlust — Discover Your Next Adventure{% endblock %}
+
+{% block extra_styles %}
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1600&q=80');
+  background-size: cover; background-position: center;
+  transform: scale(1.05); animation: slowzoom 20s ease infinite alternate;
+}
+@keyframes slowzoom { from{transform:scale(1.05)} to{transform:scale(1.12)} }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(15,14,13,0.75) 0%, rgba(15,14,13,0.4) 50%, rgba(26,107,107,0.3) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 720px; padding: 0 48px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold-light); padding: 6px 16px; border-radius: 50px;
+  font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s ease forwards;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700; color: var(--white);
+  line-height: 1.1; margin-bottom: 24px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 em { color: var(--gold); font-style: italic; }
+.hero p {
+  font-size: 1.15rem; color: rgba(255,255,255,0.82);
+  max-width: 500px; margin-bottom: 40px;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.hero-stats {
+  position: absolute; bottom: 80px; right: 48px; z-index: 2;
+  display: flex; gap: 32px;
+  animation: fadeIn 1s 0.5s ease both;
+}
+.hero-stat { text-align: center; color: var(--white); }
+.hero-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 700; color: var(--gold);
+}
+.hero-stat .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.hero-scroll {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 2; animation: bounce 2s infinite;
+  color: rgba(255,255,255,0.6); font-size: 1.2rem;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* SEARCH BAR */
+.search-section {
+  background: var(--white); padding: 0;
+  position: relative; z-index: 5; margin-top: -1px;
+}
+.search-bar {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 8px; display: flex; align-items: center; gap: 0;
+  max-width: 860px; margin: -36px auto 0; position: relative; z-index: 10;
+}
+.search-field {
+  flex: 1; padding: 12px 20px;
+  display: flex; align-items: center; gap: 10px;
+  border-right: 1px solid var(--gray-200);
+}
+.search-field:last-of-type { border-right: none; }
+.search-field i { color: var(--gold); font-size: 1rem; }
+.search-field input, .search-field select {
+  border: none; outline: none; background: none;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  color: var(--ink); width: 100%;
+}
+.search-field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+
+/* SECTIONS */
+section { padding: 96px 0; }
+.section-label {
+  display: inline-block; font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700; line-height: 1.15; margin-bottom: 16px;
+}
+.section-sub { color: var(--gray-600); font-size: 1.05rem; max-width: 500px; }
+.section-header { margin-bottom: 52px; }
+
+/* DESTINATION CARDS */
+.dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.dest-card {
+  border-radius: var(--radius); overflow: hidden;
+  background: var(--white); box-shadow: var(--shadow-sm);
+  transition: all 0.35s; cursor: pointer; text-decoration: none; color: inherit;
+  display: block;
+}
+.dest-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+.dest-card-img {
+  position: relative; height: 220px; overflow: hidden;
+}
+.dest-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.dest-card:hover .dest-card-img img { transform: scale(1.08); }
+.dest-card-country {
+  position: absolute; top: 16px; left: 16px;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+  padding: 4px 12px; border-radius: 50px;
+  font-size: 0.78rem; font-weight: 600; color: var(--ink);
+}
+.dest-card-tags {
+  position: absolute; bottom: 16px; left: 16px; display: flex; gap: 6px; flex-wrap: wrap;
+}
+.dest-card-tags .tag { background: rgba(15,14,13,0.7); color: var(--white); font-size: 0.72rem; }
+.dest-card-body { padding: 20px 22px 22px; }
+.dest-card-body h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 6px; }
+.dest-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+.dest-card-price { font-weight: 600; font-size: 0.9rem; }
+.dest-card-price span { color: var(--gray-400); font-weight: 400; }
+
+/* FEATURES */
+.features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.feature-card {
+  background: var(--gray-100); border-radius: var(--radius);
+  padding: 32px 28px; text-align: center;
+  transition: all 0.3s;
+}
+.feature-card:hover { background: var(--ink); color: var(--white); transform: translateY(-4px); }
+.feature-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: var(--sand); display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; color: var(--gold); margin: 0 auto 20px;
+  transition: all 0.3s;
+}
+.feature-card:hover .feature-icon { background: rgba(201,168,76,0.2); }
+.feature-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+.feature-card p { font-size: 0.88rem; line-height: 1.6; color: var(--gray-600); transition: color 0.3s; }
+.feature-card:hover p { color: rgba(255,255,255,0.75); }
+
+/* CTA BANNER */
+.cta-banner {
+  background: var(--ink); border-radius: 24px;
+  padding: 72px; display: flex; align-items: center; justify-content: space-between; gap: 40px;
+  background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80');
+  background-size: cover; background-position: center;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(15,14,13,0.92) 50%, rgba(15,14,13,0.5));
+}
+.cta-content { position: relative; z-index: 1; }
+.cta-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem; color: var(--white); margin-bottom: 16px;
+}
+.cta-content p { color: rgba(255,255,255,0.75); font-size: 1.05rem; max-width: 420px; }
+.cta-actions { position: relative; z-index: 1; display: flex; gap: 16px; }
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><i class="fas fa-star"></i> #1 Travel Planning Platform</div>
+    <h1>Explore the World with <em>Confidence</em></h1>
+    <p>Discover breathtaking destinations, curate personalized itineraries, and turn your dream trip into reality.</p>
+    <div class="hero-actions">
+      <a href="/explore" class="btn btn-gold"><i class="fas fa-map-marked-alt"></i> Explore Destinations</a>
+      <a href="/plan" class="btn" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4)"><i class="fas fa-route"></i> Plan My Trip</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">50+</div><div class="lbl">Destinations</div></div>
+    <div class="hero-stat"><div class="num">120k</div><div class="lbl">Happy Travelers</div></div>
+    <div class="hero-stat"><div class="num">4.9★</div><div class="lbl">App Rating</div></div>
+  </div>
+  <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- SEARCH -->
+<div style="background:var(--white);padding-bottom:80px;">
+  <div class="container">
+    <form class="search-bar" action="/explore" method="get">
+      <div class="search-field">
+        <i class="fas fa-search"></i>
+        <div>
+          <label>Destination</label>
+          <input type="text" name="q" placeholder="Where to?">
+        </div>
+      </div>
+      <div class="search-field">
+        <i class="fas fa-tag"></i>
+        <div>
+          <label>Category</label>
+          <select name="tag">
+            <option value="">Any Style</option>
+            <option>Beach</option><option>Culture</option><option>Romance</option>
+            <option>Adventure</option><option>Luxury</option><option>Food</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-field">
+        <i class="fas fa-calendar-alt"></i>
+        <div>
+          <label>Duration</label>
+          <select>
+            <option>Any Length</option>
+            <option>Weekend</option><option>1 Week</option><option>2 Weeks</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="white-space:nowrap;border-radius:12px;padding:12px 28px">
+        <i class="fas fa-search"></i> Search
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- FEATURED DESTINATIONS -->
+<section style="padding-top:0">
+  <div class="container">
+    <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div>
+        <div class="section-label">✈ Top Picks</div>
+        <h2 class="section-title">Popular Destinations</h2>
+        <p class="section-sub">Handpicked experiences for unforgettable journeys</p>
+      </div>
+      <a href="/explore" class="btn btn-outline">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="dest-grid">
+      {% for dest in destinations %}
+      {% set dest_id = dest.name.split(',')[0]|lower|replace(' ','') %}
+      {% set id_map = {'paris':'paris','tokyo':'tokyo','bali':'bali','new york':'newyork','santorini':'santorini','dubai':'dubai'} %}
+      {% set real_id = 'paris' %}
+      {% if 'paris' in dest.name|lower %}{% set real_id = 'paris' %}
+      {% elif 'tokyo' in dest.name|lower %}{% set real_id = 'tokyo' %}
+      {% elif 'bali' in dest.name|lower %}{% set real_id = 'bali' %}
+      {% elif 'new york' in dest.name|lower %}{% set real_id = 'newyork' %}
+      {% elif 'santorini' in dest.name|lower %}{% set real_id = 'santorini' %}
+      {% elif 'dubai' in dest.name|lower %}{% set real_id = 'dubai' %}
+      {% endif %}
+      <a href="/destination/{{ real_id }}" class="dest-card animate-up delay-{{ loop.index % 3 + 1 }}">
+        <div class="dest-card-img">
+          <img src="{{ dest.image }}" alt="{{ dest.name }}" loading="lazy">
+          <div class="dest-card-country"><i class="fas fa-map-pin" style="color:var(--rust);margin-right:4px"></i>{{ dest.country }}</div>
+          <div class="dest-card-tags">
+            {% for tag in dest.tags[:2] %}<span class="tag">{{ tag }}</span>{% endfor %}
+          </div>
+        </div>
+        <div class="dest-card-body">
+          <h3>{{ dest.name }}</h3>
+          <p style="font-size:0.88rem;color:var(--gray-600);line-height:1.5">{{ dest.description[:80] }}…</p>
+          <div class="dest-card-meta">
+            <div class="rating">
+              <i class="fas fa-star star"></i>
+              <strong>{{ dest.rating }}</strong>
+              <span style="color:var(--gray-400)">({{ "{:,}".format(dest.reviews) }})</span>
+            </div>
+            <div class="dest-card-price">From ${{ dest.price_per_day }}<span>/day</span></div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="background:var(--gray-100)">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-label">Why Choose Us</div>
+      <h2 class="section-title">Plan Smarter. Travel Better.</h2>
+      <p class="section-sub" style="margin:0 auto">Everything you need to craft the perfect trip</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-route"></i></div>
+        <h3>Smart Itineraries</h3>
+        <p>AI-powered day-by-day plans tailored to your travel style and budget</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hotel"></i></div>
+        <h3>Curated Hotels</h3>
+        <p>Handpicked accommodations from budget gems to luxury resorts</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+        <h3>Budget Tracker</h3>
+        <p>Real-time cost estimates so you stay on budget without surprises</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-map"></i></div>
+        <h3>Local Insights</h3>
+        <p>Expert tips, hidden gems and cultural know-how for every destination</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section>
+  <div class="container">
+    <div class="cta-banner">
+      <div class="cta-content">
+        <h2>Your Next Adventure Starts Here</h2>
+        <p>Tell us your dream destination and we'll build a complete itinerary in seconds.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="/plan" class="btn btn-gold"><i class="fas fa-magic"></i> Plan My Trip</a>
+        <a href="/explore" class="btn" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.35)">Browse Destinations</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

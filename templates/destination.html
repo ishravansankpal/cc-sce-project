@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% block title %}{{ dest.name }} — Wanderlust{% endblock %}
+
+{% block extra_styles %}
+.dest-hero {
+  height: 70vh; position: relative; overflow: hidden;
+}
+.dest-hero img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 8s ease; transform: scale(1.03);
+}
+.dest-hero:hover img { transform: scale(1); }
+.dest-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(15,14,13,0.85) 0%, rgba(15,14,13,0.2) 60%, transparent 100%);
+}
+.dest-hero-content {
+  position: absolute; bottom: 48px; left: 0; right: 0;
+  z-index: 2;
+}
+.dest-hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  color: var(--white); font-weight: 700;
+  margin-bottom: 12px;
+}
+.dest-hero-meta { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.dest-hero-meta .badge {
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.85); font-size: 0.9rem;
+}
+.dest-hero-meta .badge i { color: var(--gold); }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+.breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; }
+.breadcrumb a:hover { color: var(--white); }
+.breadcrumb span { color: rgba(255,255,255,0.4); }
+
+.dest-content { display: grid; grid-template-columns: 1fr 340px; gap: 48px; padding: 64px 0 80px; }
+.dest-main h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 16px; }
+.dest-main p { color: var(--gray-600); line-height: 1.8; font-size: 1rem; margin-bottom: 32px; }
+
+/* INFO CARDS */
+.info-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 48px; }
+.info-card {
+  background: var(--gray-100); border-radius: var(--radius-sm);
+  padding: 18px 16px; text-align: center;
+}
+.info-card i { font-size: 1.2rem; color: var(--gold); margin-bottom: 8px; display: block; }
+.info-card .val { font-weight: 600; font-size: 0.88rem; margin-bottom: 2px; }
+.info-card .lbl { font-size: 0.75rem; color: var(--gray-400); }
+
+/* ATTRACTIONS */
+.attractions-list { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 48px; }
+.attraction-card {
+  display: flex; gap: 14px; background: var(--white);
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  padding: 14px; transition: all 0.25s; cursor: default;
+}
+.attraction-card:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); }
+.attraction-thumb { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+.attraction-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.attraction-info p { font-size: 0.8rem; color: var(--gray-400); }
+.attraction-meta { display: flex; gap: 10px; margin-top: 6px; }
+.attraction-meta span { font-size: 0.75rem; color: var(--gray-600); display: flex; align-items: center; gap: 4px; }
+
+/* SIDEBAR */
+.dest-sidebar {}
+.sticky-box { position: sticky; top: 96px; }
+.booking-card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 28px; margin-bottom: 24px;
+  border: 1px solid var(--gray-200);
+}
+.booking-card .price-line {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.booking-card .price {
+  font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
+}
+.booking-card .price sub { font-size: 0.9rem; font-family: 'DM Sans'; color: var(--gray-400); }
+.booking-form-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.form-group label { font-size: 0.78rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: block; }
+.form-group select, .form-group input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  outline: none; transition: border 0.2s; background: var(--white);
+}
+.form-group select:focus, .form-group input:focus { border-color: var(--ink); }
+
+.hotels-section h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 16px; }
+.hotel-card {
+  display: flex; gap: 12px; padding: 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  margin-bottom: 12px; transition: all 0.2s;
+}
+.hotel-card:hover { border-color: var(--teal); }
+.hotel-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.hotel-info h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+.hotel-stars { color: var(--gold); font-size: 0.7rem; margin-bottom: 4px; }
+.hotel-price { font-weight: 700; font-size: 0.95rem; color: var(--teal); }
+.hotel-price span { font-weight: 400; font-size: 0.78rem; color: var(--gray-400); }
+{% endblock %}
+
+{% block content %}
+<div class="dest-hero">
+  <img src="{{ dest.hero }}" alt="{{ dest.name }}">
+  <div class="dest-hero-overlay"></div>
+  <div class="dest-hero-content">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/explore"><i class="fas fa-globe"></i> All Destinations</a>
+        <span>/</span>
+        <a href="#">{{ dest.country }}</a>
+        <span>/</span>
+        <span style="color:rgba(255,255,255,0.9)">{{ dest.name.split(',')[0] }}</span>
+      </div>
+      <h1>{{ dest.name }}</h1>
+      <div class="dest-hero-meta">
+        <div class="badge"><i class="fas fa-star"></i> <strong>{{ dest.rating }}</strong> ({{ "{:,}".format(dest.reviews) }} reviews)</div>
+        <div class="badge"><i class="fas fa-thermometer-half"></i> {{ dest.weather }}</div>
+        <div class="badge"><i class="fas fa-coins"></i> {{ dest.currency }}</div>
+        <div class="badge"><i class="fas fa-clock"></i> Best: {{ dest.best_time }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="dest-content">
+    <!-- MAIN -->
+    <div class="dest-main">
+      <h2>About {{ dest.name.split(',')[0] }}</h2>
+      <p>{{ dest.description }} Whether you're seeking adventure, relaxation, culture or cuisine, {{ dest.name.split(',')[0] }} has something extraordinary to offer every traveler. From hidden local spots to iconic landmarks, every corner of this destination tells a story waiting to be discovered.</p>
+
+      <div class="info-cards">
+        <div class="info-card">
+          <i class="fas fa-language"></i>
+          <div class="val">{{ dest.language.split('/')[0].strip() }}</div>
+          <div class="lbl">Language</div>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-coins"></i>
+          <div class="val">{{ dest.currency.split('(')[0].strip() }}</div>
+          <div class="lbl">Currency</div>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-clock"></i>
+          <div class="val">{{ dest.timezone.split('(')[0].strip() }}</div>
+          <div class="lbl">Time Zone</div>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-calendar-check"></i>
+          <div class="val" style="font-size:0.78rem">{{ dest.best_time }}</div>
+          <div class="lbl">Best Time</div>
+        </div>
+      </div>
+
+      <h2>Top Attractions</h2>
+      <div class="attractions-list">
+        {% for attr in dest.attractions %}
+        <div class="attraction-card">
+          <img src="{{ attr.img }}" alt="{{ attr.name }}" class="attraction-thumb">
+          <div class="attraction-info">
+            <h4>{{ attr.name }}</h4>
+            <p>{{ attr.type }}</p>
+            <div class="attraction-meta">
+              <span><i class="fas fa-clock"></i> {{ attr.duration }}</span>
+              <span><i class="fas fa-ticket-alt"></i> {{ attr.price }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- TAG PILLS -->
+      <h2>Travel Style</h2>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+        {% for tag in dest.tags %}
+        <a href="/explore?tag={{ tag }}" style="text-decoration:none">
+          <span class="tag" style="font-size:0.9rem;padding:8px 20px;background:var(--sand);color:var(--ink);font-weight:500;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='var(--ink)';this.style.color='var(--white)'" onmouseout="this.style.background='var(--sand)';this.style.color='var(--ink)'">{{ tag }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="dest-sidebar">
+      <div class="sticky-box">
+        <div class="booking-card">
+          <div class="price-line">
+            <div>
+              <div class="price">${{ dest.price_per_day }}<sub>/day</sub></div>
+              <div class="rating" style="margin-top:4px">
+                {% for i in range(5) %}<i class="fas fa-star star" style="font-size:0.8rem"></i>{% endfor %}
+                <span style="color:var(--gray-400);font-size:0.82rem;margin-left:4px">{{ dest.rating }} excellent</span>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:0.78rem;color:var(--gray-400)">from</div>
+              <div style="font-weight:600;font-size:1.1rem;color:var(--teal)">${{ dest.price_per_day * 5 }}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400)">5 days est.</div>
+            </div>
+          </div>
+          <div class="booking-form-row">
+            <div class="form-group">
+              <label>Departure Date</label>
+              <input type="date" id="depDate">
+            </div>
+            <div class="form-group">
+              <label>Duration</label>
+              <select id="duration">
+                <option>3 Days</option><option selected>5 Days</option>
+                <option>7 Days</option><option>10 Days</option><option>14 Days</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Travelers</label>
+              <select id="travelers">
+                <option>1 Person</option><option selected>2 People</option>
+                <option>3 People</option><option>4+ People</option>
+              </select>
+            </div>
+          </div>
+          <a href="/plan?dest={{ dest_id }}" class="btn btn-primary" style="width:100%;justify-content:center;border-radius:12px;padding:14px">
+            <i class="fas fa-magic"></i> Build My Itinerary
+          </a>
+          <p style="text-align:center;font-size:0.78rem;color:var(--gray-400);margin-top:12px">Free cancellation up to 48 hrs</p>
+        </div>
+
+        <div class="hotels-section">
+          <h3>Where to Stay</h3>
+          {% for hotel in dest.hotels %}
+          <div class="hotel-card">
+            <img src="{{ hotel.img }}" alt="{{ hotel.name }}" class="hotel-thumb">
+            <div class="hotel-info">
+              <h4>{{ hotel.name }}</h4>
+              <div class="hotel-stars">
+                {% for i in range(hotel.stars) %}<i class="fas fa-star"></i>{% endfor %}
+                {% for i in range(5 - hotel.stars) %}<i class="far fa-star"></i>{% endfor %}
+              </div>
+              <div class="hotel-price">${{ hotel.price }}<span>/night</span></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Set default departure date to tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('depDate').value = tomorrow.toISOString().split('T')[0];
+</script>
+{% endblock %}

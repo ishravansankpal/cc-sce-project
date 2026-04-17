@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}Explore Destinations — Wanderlust{% endblock %}
+
+{% block extra_styles %}
+.explore-hero {
+  background: var(--ink);
+  background-image: url('https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1600&q=80');
+  background-size: cover; background-position: center 40%;
+  position: relative; padding: 120px 0 80px;
+}
+.explore-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(15,14,13,0.7) 0%, rgba(15,14,13,0.5) 100%);
+}
+.explore-hero-content { position: relative; z-index: 1; text-align: center; }
+.explore-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.5rem); color: var(--white);
+  margin-bottom: 16px;
+}
+.explore-hero p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 480px; margin: 0 auto; }
+
+.filter-bar {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  position: sticky; top: 72px; z-index: 100;
+  padding: 16px 0;
+}
+.filter-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.filter-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-tag {
+  padding: 7px 18px; border-radius: 50px;
+  font-size: 0.85rem; font-weight: 500; cursor: pointer;
+  border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-600);
+  text-decoration: none; transition: all 0.2s;
+}
+.filter-tag:hover { border-color: var(--ink); color: var(--ink); }
+.filter-tag.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.search-input-wrap {
+  position: relative; min-width: 240px;
+}
+.search-input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray-400); }
+.search-input-wrap input {
+  width: 100%; padding: 9px 16px 9px 38px;
+  border: 1.5px solid var(--gray-200); border-radius: 50px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  outline: none; transition: border 0.2s; background: var(--gray-100);
+}
+.search-input-wrap input:focus { border-color: var(--ink); background: var(--white); }
+
+.destinations-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  padding: 56px 0;
+}
+.dest-card-v2 {
+  border-radius: var(--radius); overflow: hidden;
+  background: var(--white); box-shadow: var(--shadow-sm);
+  transition: all 0.35s; text-decoration: none; color: inherit;
+  display: flex; flex-direction: column;
+}
+.dest-card-v2:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.dcard-img {
+  position: relative; height: 200px; overflow: hidden;
+}
+.dcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.dest-card-v2:hover .dcard-img img { transform: scale(1.07); }
+.dcard-badge {
+  position: absolute; top: 14px; right: 14px;
+  background: var(--white); padding: 4px 10px; border-radius: 50px;
+  font-size: 0.75rem; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; gap: 4px;
+}
+.dcard-weather {
+  position: absolute; bottom: 14px; left: 14px;
+  background: rgba(15,14,13,0.65); backdrop-filter: blur(6px);
+  color: var(--white); padding: 4px 12px; border-radius: 50px;
+  font-size: 0.78rem; display: flex; align-items: center; gap: 6px;
+}
+.dcard-body { padding: 20px 22px; flex: 1; display: flex; flex-direction: column; }
+.dcard-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 8px; }
+.dcard-body p { font-size: 0.87rem; color: var(--gray-600); line-height: 1.55; flex: 1; }
+.dcard-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
+.dcard-info { display: flex; gap: 12px; font-size: 0.82rem; color: var(--gray-400); }
+.dcard-info span { display: flex; align-items: center; gap: 4px; }
+.dcard-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.dcard-tags .tag { font-size: 0.75rem; background: var(--sand); color: var(--gray-600); }
+.plan-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink); color: var(--white);
+  padding: 8px 18px; border-radius: 50px;
+  font-size: 0.82rem; font-weight: 500; text-decoration: none;
+  transition: all 0.2s; white-space: nowrap;
+}
+.plan-btn:hover { background: var(--teal); }
+
+.no-results {
+  grid-column: 1/-1; text-align: center; padding: 80px 0; color: var(--gray-400);
+}
+.no-results i { font-size: 3rem; margin-bottom: 16px; display: block; }
+.results-count { color: var(--gray-400); font-size: 0.9rem; margin-top: 4px; }
+{% endblock %}
+
+{% block content %}
+<div class="explore-hero">
+  <div class="container">
+    <div class="explore-hero-content animate-up">
+      <div class="section-label" style="color:var(--gold-light)">✈ Wander the World</div>
+      <h1>Find Your Perfect Destination</h1>
+      <p>Explore our handpicked collection of the world's most incredible places</p>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <div class="filter-tags">
+        <a href="/explore" class="filter-tag {% if not active_tag %}active{% endif %}">All</a>
+        {% for tag in tags %}
+        <a href="/explore?tag={{ tag }}" class="filter-tag {% if active_tag == tag %}active{% endif %}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      <form method="get" action="/explore" style="display:flex;gap:8px;align-items:center">
+        {% if active_tag %}<input type="hidden" name="tag" value="{{ active_tag }}">{% endif %}
+        <div class="search-input-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" name="q" placeholder="Search destinations…" value="{{ search }}">
+        </div>
+        <button type="submit" class="btn btn-primary" style="padding:9px 20px;border-radius:50px;font-size:0.88rem">Go</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding-top:40px">
+    <div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem">
+        {% if active_tag %}{{ active_tag }} Destinations
+        {% elif search %}Results for "{{ search }}"
+        {% else %}All Destinations{% endif %}
+      </h2>
+      <p class="results-count"><strong>{{ destinations|length }}</strong> place{{ 's' if destinations|length != 1 }} found</p>
+    </div>
+    {% if active_tag or search %}
+    <a href="/explore" style="font-size:0.88rem;color:var(--gray-600);text-decoration:none;display:flex;align-items:center;gap:6px">
+      <i class="fas fa-times"></i> Clear filters
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="destinations-grid" id="destGrid">
+    {% for dest in destinations %}
+    {% set real_id = 'paris' %}
+    {% if 'paris' in dest.name|lower %}{% set real_id = 'paris' %}
+    {% elif 'tokyo' in dest.name|lower %}{% set real_id = 'tokyo' %}
+    {% elif 'bali' in dest.name|lower %}{% set real_id = 'bali' %}
+    {% elif 'new york' in dest.name|lower %}{% set real_id = 'newyork' %}
+    {% elif 'santorini' in dest.name|lower %}{% set real_id = 'santorini' %}
+    {% elif 'dubai' in dest.name|lower %}{% set real_id = 'dubai' %}
+    {% endif %}
+    <a href="/destination/{{ real_id }}" class="dest-card-v2 animate-up" style="animation-delay:{{ loop.index0 * 0.07 }}s;opacity:0">
+      <div class="dcard-img">
+        <img src="{{ dest.image }}" alt="{{ dest.name }}" loading="lazy">
+        <div class="dcard-badge"><i class="fas fa-star" style="color:var(--gold)"></i> {{ dest.rating }}</div>
+        <div class="dcard-weather"><i class="fas fa-sun"></i> {{ dest.weather }}</div>
+      </div>
+      <div class="dcard-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <h3>{{ dest.name }}</h3>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--teal);white-space:nowrap">${{ dest.price_per_day }}/day</div>
+        </div>
+        <p>{{ dest.description }}</p>
+        <div class="dcard-tags">
+          {% for tag in dest.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <div class="dcard-footer">
+          <div class="dcard-info">
+            <span><i class="fas fa-language"></i> {{ dest.language.split('/')[0].strip() }}</span>
+            <span><i class="fas fa-clock"></i> {{ dest.best_time.split('(')[0].strip() }}</span>
+          </div>
+          <span class="plan-btn" onclick="event.preventDefault();window.location.href='/plan?dest={{ real_id }}'">
+            <i class="fas fa-route"></i> Plan
+          </span>
+        </div>
+      </div>
+    </a>
+    {% else %}
+    <div class="no-results">
+      <i class="fas fa-map-marked-alt"></i>
+      <h3 style="color:var(--ink);margin-bottom:8px">No destinations found</h3>
+      <p>Try adjusting your filters or <a href="/explore" style="color:var(--teal)">browse all destinations</a></p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
