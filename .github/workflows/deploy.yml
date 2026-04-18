@@ -1,0 +1,22 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u rahul0830 --password-stdin
+
+    - name: Build Docker Image
+      run: docker build -t rahul0830/flask-app .
+
+    - name: Push Docker Image
+      run: docker push rahul0830/flask-app
